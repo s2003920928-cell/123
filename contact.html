@@ -41,35 +41,36 @@
   <p id="statusMsg" style="color: green; font-weight: bold;"></p>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbw7MP-tQj4m0tU6cIQdsk4EB0gRUbXaW1DwAd_0LOA1KrCkDoG3-yuxTcWKMApQwuQ/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby6ySzfyH2yMZXCCcaSCVQ-KKioDPn_PBsO0jED-9FxTW7HN650Ulb99vBtSS58BQ/exec';
     const form = document.getElementById('contactForm');
     const submitBtn = document.getElementById('submitBtn');
     const statusMsg = document.getElementById('statusMsg');
-
-    form.addEventListener('click', e => {
-      // 這裡可以做預防重複點擊或其他前端驗證
-    });
 
     form.addEventListener('submit', e => {
       e.preventDefault();
       submitBtn.disabled = true;
       submitBtn.textContent = '寄送中...';
 
-      // 透過 fetch 將表單資料送給 Google Apps Script
-      fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-        .then(response => {
-          statusMsg.textContent = '感謝您的填寫！表單已成功送出，我們將盡快與您聯繫。';
-          form.reset();
-          submitBtn.disabled = false;
-          submitBtn.textContent = '送出';
-        })
-        .catch(error => {
-          console.error('Error!', error.message);
-          statusMsg.style.color = 'red';
-          statusMsg.textContent = '發送失敗，請稍後再試。';
-          submitBtn.disabled = false;
-          submitBtn.textContent = '送出';
-        });
+      // 使用 no-cors 模式發送，避開瀏覽器跨域阻擋
+      fetch(scriptURL, { 
+        method: 'POST', 
+        mode: 'no-cors',
+        body: new FormData(form)
+      })
+      .then(response => {
+        statusMsg.style.color = 'green';
+        statusMsg.textContent = '感謝您的填寫！表單已成功送出，我們將盡快與您聯繫。';
+        form.reset();
+        submitBtn.disabled = false;
+        submitBtn.textContent = '送出';
+      })
+      .catch(error => {
+        console.error('Error!', error);
+        statusMsg.style.color = 'red';
+        statusMsg.textContent = '發送失敗，請稍後再試。';
+        submitBtn.disabled = false;
+        submitBtn.textContent = '送出';
+      });
     });
   </script>
 </body>
